@@ -30,6 +30,7 @@ jobs:
 
       - name: Run tests
         run: |
+          export PYTHONPATH=$PYTHONPATH:$(pwd)
           if [ -f pytest.ini ] || [ -d tests ]; then
             pytest --maxfail=1 --disable-warnings -q
           else
