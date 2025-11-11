@@ -1,0 +1,59 @@
+name: CI Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_pass
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U test_user"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Run setup and tests in Bash
+        shell: bash
+        run: |
+          # Set Python version
+          python_version="3.9"
+          echo "Setting up Python $python_version"
+          sudo apt-get update
+          sudo apt-get install -y python${python_version} python3-pip
+
+          # Upgrade pip and install dependencies
+          python3 -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+          # Export environment variables
+          export PYTHONPATH="$PYTHONPATH:$(pwd)"
+          export DATABASE_URL="postgres://test_user:test_pass@localhost:5432/test_db"
+
+          # Wait for PostgreSQL to be ready
+          echo "Waiting for PostgreSQL to be ready..."
+          until pg_isready -h localhost -p 5432 -U test_user; do
+            sleep 2
+          done
+
+          # Run tests
+          echo "Running pytest..."
+          pytest --maxfail=1 --disable-warnings -q
