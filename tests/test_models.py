@@ -175,3 +175,20 @@ class TestAccount(unittest.TestCase):
         """It should not Deserialize an account with a TypeError"""
         account = Account()
         self.assertRaises(DataValidationError, account.deserialize, [])
+
+    import unittest
+from service.models import Account, DataValidationError
+
+class TestAccountModel(unittest.TestCase):
+
+    def test_account_deserialize_missing_name(self):
+        account = Account()
+        with self.assertRaises(DataValidationError) as context:
+            account.deserialize({"email": "test@test.com", "address": "123 St"})
+        self.assertIn("missing name", str(context.exception))
+
+    def test_account_deserialize_invalid_type(self):
+        account = Account()
+        with self.assertRaises(DataValidationError) as context:
+            account.deserialize("this_is_not_a_dict")
+        self.assertIn("bad or no data", str(context.exception))
