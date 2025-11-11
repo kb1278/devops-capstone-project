@@ -15,45 +15,47 @@ jobs:
     services:
       postgres:
         image: postgres:13
-        env:
-          POSTGRES_USER: test_user
-          POSTGRES_PASSWORD: test_pass
-          POSTGRES_DB: test_db
         ports:
           - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: testdb
         options: >-
-          --health-cmd "pg_isready -U test_user"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Run setup and tests in Bash
-        shell: bash
-        run: |
-          # Set Python version
-          python_version="3.9"
-          echo "Setting up Python $python_version"
-          sudo apt-get update
-          sudo apt-get install -y python${python_version} python3-pip
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
 
-          # Upgrade pip and install dependencies
-          python3 -m pip install --upgrade pip
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-          # Export environment variables
+      - name: Set environment variables
+        run: |
           export PYTHONPATH="$PYTHONPATH:$(pwd)"
-          export DATABASE_URL="postgres://test_user:test_pass@localhost:5432/test_db"
+        shell: bash
 
-          # Wait for PostgreSQL to be ready
-          echo "Waiting for PostgreSQL to be ready..."
-          until pg_isready -h localhost -p 5432 -U test_user; do
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          echo "Waiting for PostgreSQL..."
+          until pg_isready -h localhost -p 5432 -U postgres; do
             sleep 2
           done
+        shell: bash
 
-          # Run tests
-          echo "Running pytest..."
+      - name: Run tests
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/testdb
+        run: |
           pytest --maxfail=1 --disable-warnings -q
