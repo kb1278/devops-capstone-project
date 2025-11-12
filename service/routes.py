@@ -49,10 +49,17 @@ def create_account() -> Any:
         app.logger.error("Failed to create account: %s", e)
         abort(status.HTTP_400_BAD_REQUEST, f"Invalid account data: {e}")
 
-    location_url = url_for("get_account", account_id=account.id, _external=True)
-    return make_response(jsonify(account.serialize()),
-                         status.HTTP_201_CREATED,
-                         {"Location": location_url})
+    # ✅ Wrapped to stay within 79 characters
+    location_url = url_for(
+        "get_account",
+        account_id=account.id,
+        _external=True
+    )
+    return make_response(
+        jsonify(account.serialize()),
+        status.HTTP_201_CREATED,
+        {"Location": location_url}
+    )
 
 
 ############################################################
@@ -75,8 +82,10 @@ def get_account(account_id: int) -> Any:
     app.logger.info("Request to read Account with id: %s", account_id)
     account = Account.find(account_id)
     if not account:
-        abort(status.HTTP_404_NOT_FOUND,
-              f"Account with id [{account_id}] could not be found.")
+        abort(
+            status.HTTP_404_NOT_FOUND,
+            f"Account with id [{account_id}] could not be found."
+        )
     return jsonify(account.serialize()), status.HTTP_200_OK
 
 
@@ -91,8 +100,10 @@ def update_account(account_id: int) -> Any:
 
     account = Account.find(account_id)
     if not account:
-        abort(status.HTTP_404_NOT_FOUND,
-              f"Account with id [{account_id}] could not be found.")
+        abort(
+            status.HTTP_404_NOT_FOUND,
+            f"Account with id [{account_id}] could not be found."
+        )
 
     data = request.get_json()
     try:
@@ -127,6 +138,9 @@ def check_content_type(media_type: str) -> None:
     content_type = request.headers.get("Content-Type")
     if content_type != media_type:
         app.logger.error("Invalid Content-Type: %s", content_type)
-        abort(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
-              f"Content-Type must be {media_type}")
+        abort(
+            status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+            f"Content-Type must be {media_type}"
+        )
+
 
