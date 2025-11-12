@@ -3,6 +3,7 @@ Log Handlers
 
 This module contains utility functions to set up logging consistently.
 """
+
 import logging
 from flask import Flask
 
@@ -34,6 +35,7 @@ def init_logging(app: Flask, logger_name: str) -> None:
         handler.setFormatter(formatter)
 
     app.logger.info("Logging handler established")
+
 
 
 
