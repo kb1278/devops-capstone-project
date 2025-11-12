@@ -26,7 +26,7 @@ def init_logging(app: Flask, logger_name: str) -> None:
     # Define a consistent log format
     formatter = logging.Formatter(
         "[%(asctime)s] [%(levelname)s] [%(module)s] %(message)s",
-        "%Y-%m-%d %H:%M:%S %z"
+        "%Y-%m-%d %H:%M:%S %z",
     )
 
     # Apply formatter to all handlers
@@ -34,5 +34,6 @@ def init_logging(app: Flask, logger_name: str) -> None:
         handler.setFormatter(formatter)
 
     app.logger.info("Logging handler established")
+
 
 
