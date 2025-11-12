@@ -1,62 +1,52 @@
-name: CI Build
+name: CI
 
 on:
   push:
     branches:
       - main
   pull_request:
-    branches:
-      - main
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
-    container: python:3.9-slim
-
     services:
       postgres:
-        image: postgres:alpine
-        ports:
-          - 5432:5432
+        image: postgres:13
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: SSUJo2Gzt7X5PPKy7b2IpdX2
           POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
         options: >-
-          --health-cmd pg_isready
+          --health-cmd "pg_isready -U postgres"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip wheel
+          python -m venv venv
+          source venv/bin/activate
+          pip install --upgrade pip
           pip install -r requirements.txt
-
-      - name: Set PYTHONPATH
-        run: echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
-
-      - name: Lint with flake8
+      - name: Lint code
         run: |
-          flake8 service --count --select=E9,F63,F7,F82 --show-source --statistics
-          flake8 service --count --max-complexity=10 --max-line-length=127 --statistics
-
-      - name: Wait for Postgres
-        run: |
-          until pg_isready -h postgres -p 5432; do
-            echo "Waiting for Postgres..."
-            sleep 2
-          done
-
-      - name: Run unit tests with pytest
+          source venv/bin/activate
+          flake8 service
+      - name: Run tests
         env:
-          DATABASE_URI: postgresql://postgres:SSUJo2Gzt7X5PPKy7b2IpdX2@postgres:5432/testdb
+          DATABASE_URI: postgresql://postgres:SSUJo2Gzt7X5PPKy7b2IpdX2@127.0.0.1:5432/testdb
         run: |
-          pytest -v
+          source venv/bin/activate
+          nosetests -v
+
 
 
 
