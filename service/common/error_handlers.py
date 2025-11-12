@@ -11,7 +11,11 @@ from . import status
 
 def make_error_response(status_code: int, error: str, message: str):
     """Utility to create a standardized JSON error response"""
-    return jsonify(status=status_code, error=error, message=message), status_code
+    return jsonify(
+        status=status_code,
+        error=error,
+        message=message
+    ), status_code
 
 
 ######################################################################
@@ -79,3 +83,5 @@ def handle_internal_server_error(error):
         "Internal Server Error",
         str(error)
     )
+
+      
