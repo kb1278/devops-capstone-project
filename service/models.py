@@ -34,7 +34,7 @@ class PersistentBase:
     def create(self):
         """Creates an Account in the database"""
         logger.info("Creating %s", self.name)
-        self.id = None  # id must be None to generate next primary key
+        self.id = None
         db.session.add(self)
         db.session.commit()
 
@@ -56,7 +56,7 @@ class PersistentBase:
         cls.app = app
         db.init_app(app)
         app.app_context().push()
-        db.create_all()  # make SQLAlchemy tables
+        db.create_all()
 
     @classmethod
     def all(cls):
@@ -84,9 +84,11 @@ class Account(db.Model, PersistentBase):
     name = db.Column(db.String(64))
     email = db.Column(db.String(64))
     address = db.Column(db.String(256))
-    phone_number = db.Column(db.String(32), nullable=True)  # optional
+    phone_number = db.Column(db.String(32), nullable=True)
     date_joined = db.Column(
-        db.Date(), nullable=False, default=date.today()
+        db.Date(),
+        nullable=False,
+        default=date.today()
     )
 
     def __repr__(self):
@@ -100,7 +102,7 @@ class Account(db.Model, PersistentBase):
             "email": self.email,
             "address": self.address,
             "phone_number": self.phone_number,
-            "date_joined": self.date_joined.isoformat(),
+            "date_joined": self.date_joined.isoformat()
         }
 
     def deserialize(self, data):
@@ -122,12 +124,12 @@ class Account(db.Model, PersistentBase):
                 self.date_joined = date.today()
         except KeyError as error:
             raise DataValidationError(
-                "Invalid Account: missing " + error.args[0]
+                f"Invalid Account: missing {error.args[0]}"
             ) from error
         except TypeError as error:
             raise DataValidationError(
-                "Invalid Account: body of request contained bad or no data - "
-                + error.args[0]
+                f"Invalid Account: body of request contained bad or no data - "
+                f"{error.args[0]}"
             ) from error
         return self
 
