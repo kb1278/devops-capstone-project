@@ -128,8 +128,10 @@ class Account(db.Model, PersistentBase):
             ) from error
         except TypeError as error:
             raise DataValidationError(
-                f"Invalid Account: body of request contained bad or no data - "
-                f"{error.args[0]}"
+                (
+                    f"Invalid Account: body of request contained bad or no "
+                    f"data - {error.args[0]}"
+                )
             ) from error
         return self
 
