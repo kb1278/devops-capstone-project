@@ -136,6 +136,6 @@ class Account(db.Model, PersistentBase):
         Args:
             name (str): the name of the Accounts you want to match
         """
-        logger.info("Processing name query for %s ...", name)
+        logger.info("Processing name query for  ...", name)
         return cls.query.filter(cls.name == name)
-
+%s
