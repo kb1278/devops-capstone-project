@@ -3,6 +3,7 @@ from flask import Flask
 from service import config
 from service.common import log_handlers
 from flask_talisman import Talisman
+from flask_cors import CORS
 
 # Create Flask application
 app = Flask(__name__)
@@ -14,6 +15,9 @@ if app.config.get("TESTING", False):
     talisman_force_https = False
 
 talisman = Talisman(app, force_https=talisman_force_https)
+
+CORS(app)
+from . import routes
 
 # Import routes and models AFTER Flask app creation to avoid circular imports
 # pylint: disable=wrong-import-position, cyclic-import
