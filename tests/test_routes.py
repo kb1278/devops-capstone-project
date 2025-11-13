@@ -142,13 +142,13 @@ class TestAccountService(TestCase):
         """It should list all accounts"""
         # Create some accounts first
         accounts = self._create_accounts(3)
-    
+
         # Call the GET endpoint to list accounts
         resp = self.client.get(BASE_URL, content_type="application/json")
-    
+
         # Assert HTTP 200 OK
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
-    
+
         # Assert that we get back 3 accounts
         data = resp.get_json()
         self.assertEqual(len(data), 3)
@@ -159,4 +159,3 @@ class TestAccountService(TestCase):
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = resp.get_json()
         self.assertEqual(data, [])
-

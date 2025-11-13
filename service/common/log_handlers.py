@@ -35,7 +35,3 @@ def init_logging(app: Flask, logger_name: str) -> None:
         handler.setFormatter(formatter)
 
     app.logger.info("Logging handler established")
-
-
-
-

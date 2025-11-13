@@ -83,5 +83,3 @@ def handle_internal_server_error(error):
         "Internal Server Error",
         str(error)
     )
-
-      
