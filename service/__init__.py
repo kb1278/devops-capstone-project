@@ -1,17 +1,19 @@
-"""
-Package: service
-Package for the application models and service routes.
-
-This module creates and configures the Flask app, sets up logging, and initializes the SQL database.
-"""
 import sys
 from flask import Flask
 from service import config
 from service.common import log_handlers
+from flask_talisman import Talisman
 
 # Create Flask application
 app = Flask(__name__)
 app.config.from_object(config)
+
+# Disable HTTPS redirects in testing to avoid 302s
+talisman_force_https = False
+if app.config.get("TESTING", False):
+    talisman_force_https = False
+
+talisman = Talisman(app, force_https=talisman_force_https)
 
 # Import routes and models AFTER Flask app creation to avoid circular imports
 # pylint: disable=wrong-import-position, cyclic-import
@@ -35,3 +37,5 @@ except Exception as error:  # pylint: disable=broad-except
     sys.exit(4)
 
 app.logger.info("Service initialized successfully!")
+
+
