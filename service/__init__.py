@@ -30,7 +30,10 @@ log_handlers.init_logging(app, "gunicorn.error")
 
 # Banner log for service start
 app.logger.info("*" * 70)
-app.logger.info("  A C C O U N T   S E R V I C E   R U N N I N G  ".center(70, "*"))
+app.logger.info(
+    "  A C C O U N T   S E R V I C E   R U N N I N G  ".center(70, "*")
+)
+
 app.logger.info("*" * 70)
 
 # Initialize the database
