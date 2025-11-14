@@ -21,7 +21,6 @@ from . import routes
 
 # Import routes and models AFTER Flask app creation to avoid circular imports
 # pylint: disable=wrong-import-position, cyclic-import
-from service import routes, models  # noqa: F401 E402
 from service.common import error_handlers, cli_commands  # noqa: F401 E402
 
 # Set up logging for production
