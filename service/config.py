@@ -16,7 +16,7 @@ if not DATABASE_URI:
     DATABASE_URI = (
         f"postgresql://{DATABASE_USER}:{DATABASE_PASSWORD}"
         f"@{DATABASE_HOST}:5432/{DATABASE_NAME}"
-)
+    )
 
 
 # Configure SQLAlchemy
