@@ -30,6 +30,6 @@ coverage==6.3.2
 httpie==3.2.1
 
 Flask-Talisman
-Flask-Cors==3.1.2  # or the latest version
+Flask-Cors==3.0.10
 
 
